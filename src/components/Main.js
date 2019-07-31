@@ -1,9 +1,9 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import Home from "./Pages/Home";
-import ErrorPage from "./Pages/ErrorPage";
-import Register from "./Pages/Account/Register";
-import PermissionDenied from "./Pages/PermissionDenied";
+import Home from "./pages/Home";
+import ErrorPage from "./pages/ErrorPage";
+import Register from "./pages/Account/Register";
+import PermissionDenied from "./pages/PermissionDenied";
 
 const Main = () => (
     <main>

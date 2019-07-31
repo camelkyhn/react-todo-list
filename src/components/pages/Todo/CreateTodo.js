@@ -119,9 +119,9 @@ class CreateTodo extends Component {
                 <h1 className="text-center">Create Todo Item</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="todoAddName">Name</label>
+                        <label htmlFor="todoCreateName">Name</label>
                         <input 
-                            id="todoAddName"
+                            id="todoCreateName"
                             name="name" 
                             required
                             type="text" 
@@ -132,9 +132,9 @@ class CreateTodo extends Component {
                             onChange={this.handleChange} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="todoAddDescription">Description</label>
+                        <label htmlFor="todoCreateDescription">Description</label>
                         <input 
-                            id="todoAddDescription"
+                            id="todoCreateDescription"
                             name="description" 
                             required
                             type="text" 
@@ -145,9 +145,9 @@ class CreateTodo extends Component {
                             onChange={this.handleChange} />
                     </div>
                     <div className="form-group">
-                        <p htmlFor="todoAddDeadline">Deadline</p>
+                        <p htmlFor="todoCreateDeadline">Deadline</p>
                         <DatePicker 
-                            id="todoAddDeadline"
+                            id="todoCreateDeadline"
                             name="deadline" 
                             required
                             className="form-control" 

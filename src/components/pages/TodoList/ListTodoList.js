@@ -38,7 +38,7 @@ class ListTodoList extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col text-left"><br /><h1>Todo Lists</h1></div>
-                    <div className="col text-right"><br /><Link to="/TodoList/Add" className="btn btn-lg btn-success"><strong>+</strong>  Create</Link></div>
+                    <div className="col text-right"><br /><Link to="/TodoList/Create" className="btn btn-lg btn-success"><strong>+</strong>  Create</Link></div>
                 </div>
                 <table className="table">
                     <thead className="thead-dark">

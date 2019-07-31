@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import Select from 'react-select';
 import AuthenticationService from "../../../services/AuthenticationService";
+import { Statuses } from "../../Statuses";
 
 class CreateTodoList extends Component
 {
@@ -11,6 +12,7 @@ class CreateTodoList extends Component
             name: '',
             users: [],
             selectedUser: null,
+            status: null,
             isCreated: false,
             isFailed: false,
             failedAuth: false
@@ -19,13 +21,15 @@ class CreateTodoList extends Component
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
+        this.handleStatusSelect = this.handleStatusSelect.bind(this);
     }
 
     handleSubmit(event) {
         event.preventDefault();
         this.AuthService.post('/TodoList/Create', {
             name: this.state.name,
-            assignedUserId: this.state.selectedUser.value
+            assignedUserId: this.state.selectedUser.value,
+            status: this.state.status.label
         })
         .then(() => { 
             this.setState({ isCreated: true, isFailed: false });
@@ -41,6 +45,10 @@ class CreateTodoList extends Component
 
     handleSelect(newValue) {
         this.setState({ selectedUser: newValue });
+    }
+
+    handleStatusSelect(status) {
+        this.setState({ status: status });
     }
 
     async componentDidMount(){
@@ -78,9 +86,9 @@ class CreateTodoList extends Component
                 <h1 className="text-center">Create Todo List</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="todoListAddName">Name</label>
+                        <label htmlFor="todoListCreateName">Name</label>
                         <input 
-                            id="todoListAddName"
+                            id="todoListCreateName"
                             name="name" 
                             required
                             type="text" 
@@ -99,6 +107,16 @@ class CreateTodoList extends Component
                             value={this.state.selectedUser}
                             onChange={this.handleSelect}
                             placeholder="Type an email to search..." />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="todoListStatus">Status</label>
+                        <Select 
+                            id="todoListStatus"
+                            name="todoListStatus"
+                            options={Statuses}
+                            value={this.state.status}
+                            onChange={this.handleStatusSelect}
+                            placeholder="Select a status for this list." />
                     </div>
                     <br />
                     <div className="text-center">

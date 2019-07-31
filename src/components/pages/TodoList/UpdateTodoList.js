@@ -33,7 +33,7 @@ class UpdateTodoList extends Component {
             status: this.state.status.label,
             assignedUserId: this.state.selectedUser.value
         };
-        this.AuthService.put('/TodoList/Update', data)
+        this.AuthService.put('/TodoList/Update/' + data.id, data)
         .then(() => { 
             this.setState({ isUpdated: true, isFailed: false });
         })
@@ -105,12 +105,12 @@ class UpdateTodoList extends Component {
         return(
             <div className="container">
                 <br />
-                <h1 className="text-center">Edit Todo List</h1>
+                <h1 className="text-center">Update Todo List</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="todoListAddName">Name</label>
+                        <label htmlFor="todoListUpdateName">Name</label>
                         <input 
-                            id="todoListAddName"
+                            id="todoListUpdateName"
                             name="name" 
                             required
                             type="text" 

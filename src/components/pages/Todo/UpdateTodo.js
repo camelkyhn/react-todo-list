@@ -169,12 +169,12 @@ class UpdateTodo extends Component {
         return(
             <div className="container">
                 <br />
-                <h1 className="text-center">Edit Todo Item</h1>
+                <h1 className="text-center">Update Todo Item</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="todoAddName">Name</label>
+                        <label htmlFor="todoUpdateName">Name</label>
                         <input 
-                            id="todoAddName"
+                            id="todoUpdateName"
                             name="name" 
                             required
                             type="text" 
@@ -185,9 +185,9 @@ class UpdateTodo extends Component {
                             onChange={this.handleChange} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="todoAddDescription">Description</label>
+                        <label htmlFor="todoUpdateDescription">Description</label>
                         <input 
-                            id="todoAddDescription"
+                            id="todoUpdateDescription"
                             name="description" 
                             required
                             type="text" 
@@ -219,9 +219,9 @@ class UpdateTodo extends Component {
                     </div>
                     <div className="form-row">
                         <div className="col">
-                            <p htmlFor="todoEditDeadline">Deadline</p>
+                            <p htmlFor="todoUpdateDeadline">Deadline</p>
                             <DatePicker 
-                                id="todoEditDeadline"
+                                id="todoUpdateDeadline"
                                 name="deadline" 
                                 required
                                 className="form-control" 

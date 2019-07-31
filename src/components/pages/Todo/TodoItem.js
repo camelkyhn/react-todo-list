@@ -12,7 +12,7 @@ const TodoItem = (props) => (
         <td>{(props.status === "Active") ? <p className="text-success">Active</p> : <p className="text-danger">Inactive</p>}</td>
         <td>
             <ul className="list-inline">
-                <li className="list-inline-item text-center"><Link to={"/Todo/Edit/" + props.itemId}>Edit</Link></li>
+                <li className="list-inline-item text-center"><Link to={"/Todo/Update/" + props.itemId}>Update</Link></li>
             </ul>
         </td>
     </tr>

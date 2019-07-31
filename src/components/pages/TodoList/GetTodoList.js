@@ -127,7 +127,7 @@ class GetTodoList extends Component {
                         <div className="col-md-2 text-right">
                             <input type="button" className="btn btn-info" onClick={this.handleSearch} value="Search" />
                         </div>
-                        <div className="col-md-2 text-right"><Link to={`/Todo/Add/${this.props.match.params.id}`} className="btn btn-success"><strong>+</strong>  Create</Link></div>
+                        <div className="col-md-2 text-right"><Link to={`/Todo/Create/${this.props.match.params.id}`} className="btn btn-success"><strong>+</strong>  Create</Link></div>
                     </div>
                 </form>
                 <table className="table">

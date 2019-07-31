@@ -2,6 +2,12 @@ import React, { Component } from "react";
 
 class ErrorPage extends Component
 {
+    constructor(props) {
+        super(props);
+        this.state = {
+            message: this.props.message
+        };
+    }
     render()
     {
         return (
@@ -13,8 +19,8 @@ class ErrorPage extends Component
                             <h1>Oops!</h1>
                             <div className="error-details">
                                 {
-                                    this.props.message ? 
-                                    this.props.message 
+                                    this.state.message ? 
+                                    this.state.message 
                                     : 'Sorry, an error has occured or you have just requested wrong page!'
                                 }
                             </div>

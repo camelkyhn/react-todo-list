@@ -5,11 +5,10 @@ class ErrorPage extends Component
     constructor(props) {
         super(props);
         this.state = {
-            message: this.props.message
+            message: this.props.location.state.message
         };
     }
-    render()
-    {
+    render() {
         return (
             <div className="container text-center">
                 <div className="row">

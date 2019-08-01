@@ -51,7 +51,7 @@ class Register extends Component
 
     render() {
         if (this.state.isRegistered) {
-            return <Redirect to="/" />;
+            return <Redirect to="/RegisterConfirmed" />;
         }
         return(
             <div className="container">

@@ -22,7 +22,9 @@ class UpdateTodo extends Component {
             canNotBeCompleted: false,
             isUpdated: false,
             isFailed: false,
-            failedAuth: false
+            failedAuth: false,
+            errorOccured: false,
+            errorMessage: ''
         };
         this.AuthService = new AuthenticationService();
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,30 +39,35 @@ class UpdateTodo extends Component {
     async componentDidMount(){
         if (this.AuthService.loggedIn())
         {
-            this.AuthService.get('/Todo/List')
+            this.AuthService.get('/Todo/List?isAllData=true')
             .then(response => {
-                var todo = response.data.data.find(t => t.id.toString() === this.props.match.params.id);
-                var status = Statuses.find(s => s.label === todo.status);
-
-                this.setState({
-                    name: todo.name,
-                    description: todo.description,
-                    deadline: new Date(todo.deadline),
-                    completed: todo.completed,
-                    selectedTodoList: { value: todo.todoList.id, label: todo.todoList.name },
-                    dependentTodo: todo.dependentTodo ? { value: todo.dependentTodo.id, label: todo.dependentTodo.name } : null,
-                    status: status,
-                });
-                var todos = [];
-                response.data.data.map(value => {
-                    if (value.id !== todo.id && value.todoList.id === todo.todoList.id) {
-                        if (value.dependentTodo && (value.dependentTodo.id !== todo.id)) {
-                            todos.push({ value: value.id, label: value.name });
+                if (response.data.succeeded === false) {
+                    this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                    console.log(response.data.exceptionMessage);
+                } else {
+                    var todo = response.data.data.find(t => t.id.toString() === this.props.match.params.id);
+                    var status = Statuses.find(s => s.label === todo.status);
+    
+                    this.setState({
+                        name: todo.name,
+                        description: todo.description,
+                        deadline: new Date(todo.deadline),
+                        completed: todo.completed,
+                        selectedTodoList: { value: todo.todoList.id, label: todo.todoList.name },
+                        dependentTodo: todo.dependentTodo ? { value: todo.dependentTodo.id, label: todo.dependentTodo.name } : null,
+                        status: status,
+                    });
+                    var todos = [];
+                    response.data.data.map(value => {
+                        if (value.id !== todo.id && value.todoList.id === todo.todoList.id) {
+                            if (value.dependentTodo && (value.dependentTodo.id !== todo.id)) {
+                                todos.push({ value: value.id, label: value.name });
+                            }
                         }
-                    }
-                    return todos;
-                });
-                this.setState({ todos: todos });
+                        return todos;
+                    });
+                    this.setState({ todos: todos });
+                }
             })
             .catch(error => {
                 console.log(error);
@@ -84,9 +91,14 @@ class UpdateTodo extends Component {
             dependentTodoId: this.state.dependentTodo ? this.state.dependentTodo.value : null,
             status: this.state.status.label
         }
-        this.AuthService.put('/Todo/Update', data)
+        this.AuthService.put('/Todo/Update/' + this.props.match.params.id, data)
         .then((response) => {
-            this.setState({ isUpdated: true, isFailed: false });
+            if (response.data.succeeded === false) {
+                this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage, isUpdated: false, isFailed: true });
+                console.log(response.data.exceptionMessage);
+            } else {
+                this.setState({ isUpdated: true, isFailed: false });       
+            }
         }).catch(error => {
             console.log(error);
             this.setState({ isUpdated: false, isFailed: true });
@@ -94,17 +106,22 @@ class UpdateTodo extends Component {
     }
 
     handleTodoListMenuOpen() {
-        this.AuthService.get('/TodoList/List')
+        this.AuthService.get('/TodoList/List?isAllData=true')
         .then(response => {
-            var todoLists = [];
-            response.data.data.map(value => {
-                todoLists.push({ value: value.id, label: value.name });
-                return todoLists;
-            });
-            this.setState({ 
-                todoLists: todoLists, 
-                selectedTodoList: todoLists.find(tl => tl.value.toString() === this.selectedTodoList.value) 
-            });
+            if (response.data.succeeded === false) {
+                this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                console.log(response.data.exceptionMessage);
+            } else {
+                var todoLists = [];
+                response.data.data.map(value => {
+                    todoLists.push({ value: value.id, label: value.name });
+                    return todoLists;
+                });
+                this.setState({ 
+                    todoLists: todoLists, 
+                    selectedTodoList: todoLists.find(tl => tl.value.toString() === this.selectedTodoList.value) 
+                });
+            }
         })
         .catch(error => { 
             console.log(error);
@@ -126,12 +143,15 @@ class UpdateTodo extends Component {
         if (value === true && this.state.dependentTodo) {
             this.AuthService.getWithoutRefresh(`/Todo/Get/${this.state.dependentTodo.value}`)
             .then(response => {
-                if (response.data.data.completed === true) {
-                    this.setState({ canNotBeCompleted: false });
-                }
-                else
-                {
-                    this.setState({ canNotBeCompleted: true });
+                if (response.data.succeeded === false) {
+                    this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                    console.log(response.data.exceptionMessage);
+                } else {
+                    if (response.data.data.completed === true) {
+                        this.setState({ canNotBeCompleted: false });
+                    } else {
+                        this.setState({ canNotBeCompleted: true });
+                    }
                 }
             })
             .catch(error => {
@@ -159,11 +179,13 @@ class UpdateTodo extends Component {
 
     render()
     {
-        if (this.state.failedAuth) {
-            return <Redirect to="PermissionDenied" />
+        if (this.state.errorOccured) {
+            return <Redirect to={{ pathname: "/ErrorPage", state: { message: this.state.errorMessage }}} />;
         }
-        if (this.state.isUpdated)
-        {
+        if (this.state.failedAuth) {
+            return <Redirect to="/PermissionDenied" />;
+        }
+        if (this.state.isUpdated) {
             return <Redirect to={`/TodoList/Get/${this.state.selectedTodoList.value}`} />;
         }
         return(

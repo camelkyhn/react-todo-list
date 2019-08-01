@@ -9,15 +9,22 @@ class ListTodoList extends Component {
         this.AuthService = new AuthenticationService();
         this.state = {
             todoLists: [],
-            failedAuth: false
+            failedAuth: false,
+            errorOccured: false,
+            errorMessage: ''
         };
     }
 
     componentDidMount(){
         if (this.AuthService.loggedIn()) {
-            this.AuthService.get('/TodoList/List')
+            this.AuthService.get('/TodoList/List?isAllData=true')
             .then(response => {
-                this.setState({ todoLists: response.data.data });
+                if (response.data.succeeded === false) {
+                    this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                    console.log(response.data.exceptionMessage);
+                } else {
+                    this.setState({ todoLists: response.data.data });   
+                }
             })
             .catch(error => {
                 console.log(error);
@@ -31,6 +38,9 @@ class ListTodoList extends Component {
 
     render()
     {
+        if (this.state.errorOccured) {
+            return <Redirect to={{ pathname: "/ErrorPage", state: { message: this.state.errorMessage }}} />;
+        }
         if (this.state.failedAuth) {
             return <Redirect to="/PermissionDenied" />;
         }

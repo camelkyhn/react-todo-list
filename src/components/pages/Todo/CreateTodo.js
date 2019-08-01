@@ -4,6 +4,7 @@ import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AuthenticationService from "../../../services/AuthenticationService";
+import { Statuses } from "../../Statuses";
 
 class CreateTodo extends Component {
     constructor(props) {
@@ -16,13 +17,17 @@ class CreateTodo extends Component {
             selectedTodoList: null,
             todos: [],
             dependentTodo: null,
+            status: null,
             isCreated: false,
             isFailed: false,
-            failedAuth: false
+            failedAuth: false,
+            errorOccured: false,
+            errorMessage: ''
         };
         this.AuthService = new AuthenticationService();
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleStatusSelect = this.handleStatusSelect.bind(this);
         this.handleTodoListSelect = this.handleTodoListSelect.bind(this);
         this.handleTodoSelect = this.handleTodoSelect.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
@@ -30,35 +35,44 @@ class CreateTodo extends Component {
 
     async componentDidMount(){
         if (this.AuthService.loggedIn()) {
-            this.AuthService.getWithoutRefresh('/TodoList/List')
+            this.AuthService.getWithoutRefresh('/TodoList/List?isAllData=true')
             .then(response => {
-                var todoLists = [];
-                response.data.data.map(value => {
-                    todoLists.push({ value: value.id, label: value.name });
-                    return todoLists;
-                });
-                var today = new Date();
-                var tomorrow = new Date();
-                tomorrow.setDate(today.getDate()+1);
-                this.setState({ 
-                    todoLists: todoLists, 
-                    selectedTodoList: todoLists.find(tl => tl.value.toString() === this.props.match.params.id),
-                    deadline: tomorrow
-                });
+                if (response.data.succeeded === false) {
+                    this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                    console.log(response.data.exceptionMessage);
+                } else {
+                    var todoLists = [];
+                    response.data.data.map(value => {
+                        todoLists.push({ value: value.id, label: value.name });
+                        return todoLists;
+                    });
+                    var today = new Date();
+                    var tomorrow = new Date();
+                    tomorrow.setDate(today.getDate()+1);
+                    this.setState({ 
+                        todoLists: todoLists, 
+                        selectedTodoList: todoLists.find(tl => tl.value.toString() === this.props.match.params.id),
+                        deadline: tomorrow
+                    });
+                }
             })
-            .catch(error => { 
+            .catch(error => {
                 console.log(error);
             });
 
-            this.AuthService.get(`/Todo/ListBy?todoListId=${this.props.match.params.id}`)
+            this.AuthService.get(`/Todo/List?isAllData=true&todoListId=${this.props.match.params.id}`)
             .then(response => {
-                var todos = [];
-                console.log(response.data.data);
-                response.data.data.map(value => {
-                    todos.push({ value: value.id, label: value.name });
-                    return todos;
-                });
-                this.setState({ todos: todos });
+                if (response.data.succeeded === false) {
+                    this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                    console.log(response.data.exceptionMessage);
+                } else {
+                    var todos = [];
+                    response.data.data.map(value => {
+                        todos.push({ value: value.id, label: value.name });
+                        return todos;
+                    });
+                    this.setState({ todos: todos });
+                }
             })
             .catch(error => {
                 console.log(error);
@@ -77,14 +91,21 @@ class CreateTodo extends Component {
             description: this.state.description,
             deadline: this.state.deadline,
             todoListId: this.state.selectedTodoList.value,
-            dependentTodoId: this.state.dependentTodo ? this.state.dependentTodo.value : null
+            dependentTodoId: this.state.dependentTodo ? this.state.dependentTodo.value : null,
+            status : this.state.status ? this.state.status.label : "Active"
         }
+        console.log(data);
         this.AuthService.post('/Todo/Create', data)
-        .then(() => { 
-            this.setState({ isCreated: true, isFailed: false });
+        .then(response => {
+            if (response.data.succeeded === false) {
+                this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage, isCreated: false, isFailed: true });
+                console.log(response.data.exceptionMessage);
+            } else {
+                this.setState({ isCreated: true, isFailed: false });   
+            }
         }).catch(error => {
-            console.log(error);
             this.setState({ isCreated: false, isFailed: true });
+            console.log(error);
         });
     }
 
@@ -104,13 +125,19 @@ class CreateTodo extends Component {
         this.setState({ deadline: date });
     }
 
+    handleStatusSelect(status) {
+        this.setState({ status: status });
+    }
+
     render()
     {
-        if (this.state.failedAuth) {
-            return <Redirect to="PermissionDenied" />
+        if (this.state.errorOccured) {
+            return <Redirect to={{ pathname: "/ErrorPage", state: { message: this.state.errorMessage }}} />;
         }
-        if (this.state.isCreated)
-        {
+        if (this.state.failedAuth) {
+            return <Redirect to="/PermissionDenied" />;
+        }
+        if (this.state.isCreated) {
             return <Redirect to={`/TodoList/Get/${this.state.selectedTodoList.value}`} />;
         }
         return(
@@ -174,6 +201,17 @@ class CreateTodo extends Component {
                             value={this.state.dependentTodo}
                             onChange={this.handleTodoSelect}
                             placeholder="Type an Todo to be dependent..." />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="todoStatus">Status</label>
+                        <Select 
+                            id="todoStatus"
+                            name="status"
+                            required
+                            options={Statuses}
+                            value={this.state.status}
+                            onChange={this.handleStatusSelect}
+                            placeholder="Select a status for this todo." />
                     </div>
                     <br />
                     <div className="text-center">

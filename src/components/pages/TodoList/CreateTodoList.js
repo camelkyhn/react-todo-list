@@ -31,8 +31,13 @@ class CreateTodoList extends Component
             assignedUserId: this.state.selectedUser.value,
             status: this.state.status.label
         })
-        .then(() => { 
-            this.setState({ isCreated: true, isFailed: false });
+        .then(response => {
+            if (response.data.succeeded === false) {
+                this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage, isCreated: false, isFailed: true });
+                console.log(response.data.exceptionMessage);
+            } else {
+                this.setState({ isCreated: true, isFailed: false });       
+            }
         }).catch(error => {
             console.log(error);
             this.setState({ isCreated: false, isFailed: true });
@@ -53,14 +58,19 @@ class CreateTodoList extends Component
 
     async componentDidMount(){
         if (this.AuthService.loggedIn()) {
-            this.AuthService.get('/User/List')
+            this.AuthService.get('/User/List?isAllData=true')
             .then(response => {
-                var users = [];
-                response.data.data.map(value => {
-                    users.push({ value: value.id, label: value.username });
-                    return users;
-                });                    
-                this.setState({ users: users });
+                if (response.data.succeeded === false) {
+                    this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                    console.log(response.data.exceptionMessage);
+                } else {
+                    var users = [];
+                    response.data.data.map(value => {
+                        users.push({ value: value.id, label: value.username });
+                        return users;
+                    });                    
+                    this.setState({ users: users });   
+                }
             })
             .catch(error => { 
                 console.log(error);
@@ -74,11 +84,14 @@ class CreateTodoList extends Component
 
     render()
     {
+        if (this.state.errorOccured) {
+            return <Redirect to={{ pathname: "/ErrorPage", state: { message: this.state.errorMessage }}} />;
+        }
         if (this.state.failedAuth) {
             return <Redirect to="/PermissionDenied" />;
         }
         if (this.state.isCreated) {
-            return <Redirect to="/TodoList/List" />
+            return <Redirect to="/TodoList/List" />;
         }
         return(
             <div className="container">

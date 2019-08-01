@@ -15,7 +15,9 @@ class UpdateTodoList extends Component {
             users: [],
             isUpdated: false,
             isFailed: false,
-            failedAuth: false
+            failedAuth: false,
+            errorOccured: false,
+            errorMessage: ''
         };
         this.AuthService = new AuthenticationService();
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -34,8 +36,13 @@ class UpdateTodoList extends Component {
             assignedUserId: this.state.selectedUser.value
         };
         this.AuthService.put('/TodoList/Update/' + data.id, data)
-        .then(() => { 
-            this.setState({ isUpdated: true, isFailed: false });
+        .then(response => {
+            if (response.data.succeeded === false) {
+                this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                console.log(response.data.exceptionMessage);
+            } else {
+                this.setState({ isUpdated: true, isFailed: false });       
+            }
         })
         .catch(error => {
             console.log(error);
@@ -56,8 +63,12 @@ class UpdateTodoList extends Component {
     }
 
     handleMenuOpen() {
-        this.AuthService.get("/User/List")
+        this.AuthService.get("/User/List?isAllData=true")
         .then(usersResponse => {
+            if (usersResponse.data.succeeded === false) {
+                this.setState({ errorOccured: true, errorMessage: usersResponse.data.exceptionMessage });
+                console.log(usersResponse.data.exceptionMessage);
+            }
             var users = [];
             usersResponse.data.data.forEach(element => {
                 users.push({ value: element.id, label: element.username });
@@ -76,12 +87,17 @@ class UpdateTodoList extends Component {
         {
             this.AuthService.get(`/TodoList/Get/${this.props.match.params.id}`)
             .then(response => {
-                var status = Statuses.find(s => s.label === response.data.data.status);
-                this.setState({ 
-                    name: response.data.data.name,
-                    status: status,
-                    selectedUser: { value: response.data.data.assignedUser.id, label: response.data.data.assignedUser.username }
-                });
+                if (response.data.succeeded === false) {
+                    this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
+                    console.log(response.data.exceptionMessage);
+                } else {
+                    var status = Statuses.find(s => s.label === response.data.data.status);
+                    this.setState({ 
+                        name: response.data.data.name,
+                        status: status,
+                        selectedUser: { value: response.data.data.assignedUser.id, label: response.data.data.assignedUser.username }
+                    });
+                }
             })
             .catch(error => { 
                 console.log(error);
@@ -93,13 +109,14 @@ class UpdateTodoList extends Component {
         }
     }
 
-    render()
-    {
+    render() {
+        if (this.state.errorOccured) {
+            return <Redirect to={{ pathname: "/ErrorPage", state: { message: this.state.errorMessage }}} />;
+        }
         if (this.state.failedAuth) {
             return <Redirect to="/PermissionDenied" />;
         }
-        if (this.state.isUpdated)
-        {
+        if (this.state.isUpdated) {
             return <Redirect to="/TodoList/List" />
         }
         return(

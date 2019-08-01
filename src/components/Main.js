@@ -11,6 +11,7 @@ import UpdateTodo from "./pages/Todo/UpdateTodo";
 import GetTodoList from "./pages/TodoList/GetTodoList";
 import PermissionDenied from "./pages/PermissionDenied";
 import DeleteTodoList from "./pages/TodoList/DeleteTodoList";
+import DeleteTodo from "./pages/Todo/DeleteTodo";
 
 const Main = () => (
     <main>
@@ -19,6 +20,7 @@ const Main = () => (
             <Route exact path="/Register" component={Register} />
             <Route exact path="/Todo/Create/:id" component={CreateTodo} />
             <Route exact path="/Todo/Update/:id" component={UpdateTodo} />
+            <Route exact path="/Todo/Delete/:id" component={DeleteTodo} />
             <Route exact path="/TodoList/Get/:id" component={GetTodoList} />
             <Route exact path="/TodoList/Create" component={CreateTodoList} />
             <Route exact path="/TodoList/Update/:id" component={UpdateTodoList} />

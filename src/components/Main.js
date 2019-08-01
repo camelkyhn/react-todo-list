@@ -4,7 +4,6 @@ import Home from "./pages/Home";
 import ErrorPage from "./pages/ErrorPage";
 import Register from "./pages/Account/Register";
 import CreateTodoList from "./pages/TodoList/CreateTodoList";
-import ListTodoList from "./pages/TodoList/ListTodoList";
 import UpdateTodoList from "./pages/TodoList/UpdateTodoList";
 import CreateTodo from "./pages/Todo/CreateTodo";
 import UpdateTodo from "./pages/Todo/UpdateTodo";
@@ -24,7 +23,6 @@ const Main = () => (
             <Route exact path="/TodoList/Get/:id" component={GetTodoList} />
             <Route exact path="/TodoList/Create" component={CreateTodoList} />
             <Route exact path="/TodoList/Update/:id" component={UpdateTodoList} />
-            <Route exact path="/TodoList/List" component={ListTodoList} />
             <Route exact path="/TodoList/Delete/:id" component={DeleteTodoList} />
             <Route exact path="/PermissionDenied" component={PermissionDenied} />
             <Route path="*" component={ErrorPage} />

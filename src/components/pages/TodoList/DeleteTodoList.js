@@ -71,7 +71,7 @@ class DeleteTodoList extends Component {
             return <Redirect to="/PermissionDenied" />;
         }
         if (this.state.isDeleted) {
-            return <Redirect to="/TodoList/List" />;
+            return <Redirect to="/" />;
         }
         return(
             <form className="container">

@@ -91,7 +91,7 @@ class CreateTodoList extends Component
             return <Redirect to="/PermissionDenied" />;
         }
         if (this.state.isCreated) {
-            return <Redirect to="/TodoList/List" />;
+            return <Redirect to="/" />;
         }
         return(
             <div className="container">

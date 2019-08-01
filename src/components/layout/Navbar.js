@@ -57,11 +57,7 @@ class Navbar extends Component
                     </button>
 
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul className="navbar-nav mr-auto">
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/TodoList/List">Lists</Link>
-                            </li>
-                        </ul>
+                        <ul className="navbar-nav mr-auto"></ul>
                         {
                             !this.state.isAuthenticated ?
                             <div>

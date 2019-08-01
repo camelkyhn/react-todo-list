@@ -4,7 +4,7 @@ import AuthenticationService from "../../../services/AuthenticationService";
 
 class Register extends Component
 {
-    constructor(){
+    constructor() {
         super();
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -29,18 +29,16 @@ class Register extends Component
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             username: this.state.email,
-            password: this.state.password
+            password: this.state.password,
+            status: 'Active'
         };
 
         this.AuthService.register(body)
                         .then(response => {
                             
-                            if (response.data.succeeded)
-                            {
+                            if (response.data.succeeded){
                                 this.setState({ isRegistered: true, isFailed: false });
-                            }
-                            else
-                            {
+                            } else {
                                 this.setState({ isRegistered: false, isFailed: true });
                                 throw new Error(response.data.exceptionMessage);
                             }
@@ -51,10 +49,8 @@ class Register extends Component
                         });
     }
 
-    render()
-    {
-        if (this.state.isRegistered)
-        {
+    render() {
+        if (this.state.isRegistered) {
             return <Redirect to="/" />;
         }
         return(

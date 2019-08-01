@@ -117,7 +117,7 @@ class UpdateTodoList extends Component {
             return <Redirect to="/PermissionDenied" />;
         }
         if (this.state.isUpdated) {
-            return <Redirect to="/TodoList/List" />
+            return <Redirect to="/TodoList/List" />;
         }
         return(
             <div className="container">

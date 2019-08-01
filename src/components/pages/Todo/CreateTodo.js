@@ -94,7 +94,6 @@ class CreateTodo extends Component {
             dependentTodoId: this.state.dependentTodo ? this.state.dependentTodo.value : null,
             status : this.state.status ? this.state.status.label : "Active"
         }
-        console.log(data);
         this.AuthService.post('/Todo/Create', data)
         .then(response => {
             if (response.data.succeeded === false) {

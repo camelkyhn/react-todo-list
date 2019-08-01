@@ -67,7 +67,6 @@ class GetTodoList extends Component {
         this.setState({ todos: [] });
         var url = `/Todo/List?isAllData=true&todoListId=${this.state.todoList ? this.state.todoList.id : this.props.match.params.id}`;
         url = url + this.prepareQueryString();
-        console.log(url);
         this.AuthService.get(url)
         .then(listResponse => {
             if (listResponse.data.succeeded === false) {

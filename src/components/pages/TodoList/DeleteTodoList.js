@@ -36,7 +36,6 @@ class DeleteTodoList extends Component {
                     this.setState({ errorOccured: true, errorMessage: response.data.exceptionMessage });
                     console.log(response.data.exceptionMessage);
                 } else {
-                    console.log(response.data);
                     this.setState({ todoList: response.data.data, id: response.data.data.id });
                 }
             })
@@ -49,7 +48,6 @@ class DeleteTodoList extends Component {
     }
 
     handleSubmit() {
-        console.log('/TodoList/Delete/' + this.props.match.params.id);
         this.AuthService.delete('/TodoList/Delete/' + this.props.match.params.id)
         .then(response => {
             if (response.data.succeeded === false) {

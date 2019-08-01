@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const PermissionDenied = () => (
     <div className="container text-center">
@@ -8,10 +9,11 @@ const PermissionDenied = () => (
                     <br /><br />
                     <h1>Permission Denied!</h1>
                     <div className="error-details">
-                        <p>Sorry, an error has occured, just try to logout and/or sign in again!</p>
+                        <h4>You do not have permission to access this content.</h4>
+                        <p>Just try to logout and/or sign in again!</p>
                     </div>
                     <br />
-                    <a href="/" className="btn btn-success btn-lg active" role="button" aria-pressed="true">Back To Home</a>
+                    <p><Link className="text-muted" to="/Register">Or you can just start with creating an account?</Link></p>
                 </div>
             </div>
         </div>

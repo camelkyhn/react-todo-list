@@ -11,6 +11,7 @@ const TodoListItem = (props) => (
             <ul className="list-inline">
                 <li className="list-inline-item text-center"><Link to={"/TodoList/Get/" + props.itemId}>View</Link></li>
                 <li className="list-inline-item text-center"><Link to={"/TodoList/Update/" + props.itemId}>Update</Link></li>
+                <li className="list-inline-item text-center"><Link to={"/TodoList/Delete/" + props.itemId}>Delete</Link></li>
             </ul>
         </td>
     </tr>

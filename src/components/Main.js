@@ -11,12 +11,14 @@ import GetTodoList from "./pages/TodoList/GetTodoList";
 import PermissionDenied from "./pages/PermissionDenied";
 import DeleteTodoList from "./pages/TodoList/DeleteTodoList";
 import DeleteTodo from "./pages/Todo/DeleteTodo";
+import RegisterConfirmed from "./pages/Account/RegisterConfirmed";
 
 const Main = () => (
     <main>
         <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/Register" component={Register} />
+            <Route exact path="/RegisterConfirmed" component={RegisterConfirmed} />
             <Route exact path="/Todo/Create/:id" component={CreateTodo} />
             <Route exact path="/Todo/Update/:id" component={UpdateTodo} />
             <Route exact path="/Todo/Delete/:id" component={DeleteTodo} />

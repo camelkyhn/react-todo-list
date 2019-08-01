@@ -3,6 +3,7 @@ import { Redirect, Link } from "react-router-dom";
 import Select from 'react-select';
 import TodoItem from "../Todo/TodoItem";
 import { Statuses } from "../../Statuses";
+import { Booleans } from "../../Booleans";
 import AuthenticationService from "../../../services/AuthenticationService";
 
 class GetTodoList extends Component {
@@ -19,8 +20,10 @@ class GetTodoList extends Component {
             },
             id: 0,
             name: '',
-            completed: false,
-            expired: false,
+            completed: null,
+            selectedCompleted: null,
+            expired: null,
+            selectedExpired: null,
             status: null,
             failedAuth: false,
             errorOccured: false,
@@ -30,6 +33,8 @@ class GetTodoList extends Component {
         this.handleSearch = this.handleSearch.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleStatusSelect = this.handleStatusSelect.bind(this);
+        this.handleCompletedSelect = this.handleCompletedSelect.bind(this);
+        this.handleExpiredSelect = this.handleExpiredSelect.bind(this);
     }
 
     componentDidMount(){
@@ -63,10 +68,21 @@ class GetTodoList extends Component {
         this.setState({ status: status });
     }
 
+    handleCompletedSelect(bool) {
+        console.log(bool);
+        this.setState({ selectedCompleted: bool, completed: bool.value });
+    }
+
+    handleExpiredSelect(bool) {
+        console.log(bool);
+        this.setState({ selectedExpired: bool, expired: bool.value });
+    }
+
     handleSearch(){
         this.setState({ todos: [] });
         var url = `/Todo/List?isAllData=true&todoListId=${this.state.todoList ? this.state.todoList.id : this.props.match.params.id}`;
         url = url + this.prepareQueryString();
+        console.log(url);
         this.AuthService.get(url)
         .then(listResponse => {
             if (listResponse.data.succeeded === false) {
@@ -83,14 +99,15 @@ class GetTodoList extends Component {
 
     prepareQueryString(){
         var query = '&';
+        console.log(this.state);
         if(this.state.name) {
             query = query + 'name=' + this.state.name + '&';
         }
-        if(this.state.completed !== undefined) {
-            query = query + 'completed=' + this.state.completed.toString() + '&';
+        if(this.state.completed !== null && this.state.completed !== undefined) {
+                query = query + 'completed=' + this.state.completed + '&';
         }
-        if(this.state.expired !== undefined && this.state.expired !== false) {
-            query = query + 'expired=' + this.state.expired.toString();
+        if(this.state.expired !== null && this.state.expired !== undefined) {
+                query = query + 'expired=' + this.state.expired + '&';
         }
         if(this.state.status !== null) {
             query = query + 'status=' + this.state.status.label;
@@ -162,25 +179,25 @@ class GetTodoList extends Component {
                                             value={this.state.name} 
                                             onChange={this.handleChange} />
                                     </div>
-                                    <div className="form-check">
-                                        <input 
+                                    <div className="form-group">
+                                        <label htmlFor="completed">Completed</label>
+                                        <Select 
                                             id="completed" 
                                             name="completed" 
-                                            type="checkbox" 
-                                            className="form-check-input" 
-                                            checked={this.state.completed} 
-                                            onChange={this.handleChange} /> 
-                                        <label htmlFor="completed">Completed</label>
+                                            placeholder="Completed?"
+                                            options={Booleans}
+                                            value={this.state.selectedCompleted} 
+                                            onChange={this.handleCompletedSelect} /> 
                                     </div>
-                                    <div className="form-check">
-                                        <input 
-                                            id="expired" 
-                                            name="expired" 
-                                            type="checkbox" 
-                                            className="form-check-input" 
-                                            checked={this.state.expired} 
-                                            onChange={this.handleChange} /> 
+                                    <div className="form-group">
                                         <label htmlFor="expired">Expired</label>
+                                        <Select 
+                                            id="expired"
+                                            name="expired"
+                                            placeholder="Expired?"
+                                            options={Booleans}
+                                            value={this.state.selectedExpired}
+                                            onChange={this.handleExpiredSelect} />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="todoListStatus">Status</label>
